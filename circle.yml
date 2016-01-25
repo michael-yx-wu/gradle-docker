@@ -1,0 +1,23 @@
+machine:
+  java:
+    version: openjdk7
+  services:
+    - docker
+  environment:
+    TERM: dumb
+
+general:
+  artifacts:
+    - build/libs
+
+test:
+  override:
+    - ./gradlew --parallel -i build
+
+deployment:
+  release:
+    tag: /[0-9]+(\.[0-9]+)+/
+    commands:
+      - ./gradlew -i bintrayUpload
+      - ./gradlew -i -Dgradle.publish.key=$GRADLE_KEY -Dgradle.publish.secret=$GRADLE_SECRET publishPlugins
+
